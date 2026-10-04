@@ -69,9 +69,4 @@ npm run dev
 ```
 *The web app will be available at `http://localhost:5173`*
 
-## 💡 Usage
 
-1. Open your browser and navigate to `http://localhost:5173`.
-2. **Upload Images**: Provide images of the front and back of a food package.
-3. **API Key**: If you didn't set the API key in the backend `.env` file, you can provide it directly through the UI.
-4. **Analyze**: Click submit to extract data and view the audit matrix!
