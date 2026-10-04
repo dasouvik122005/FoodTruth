@@ -103,358 +103,339 @@ export default function App() {
   };
 
   return (
-    <div className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen flex flex-col">
-      {/* NAVIGATION */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <a className="flex items-center gap-2 font-display font-black tracking-tight text-slate-900 text-lg" href="#">
-              <span className="w-7 h-7 rounded-lg bg-slate-900 text-white flex items-center justify-center text-sm shadow-sm font-bold">FT</span>
-              <span className="">FOODTRUTH</span>
-            </a>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Powered by Gemma 4 Multimodal
-            </span>
-          </div>
-          <div className="flex items-center gap-4">
-            <a className="text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors" href="#">How We Test</a>
-            <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-slate-200 cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">person</span>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="relative min-h-screen overflow-hidden bg-[#F8FAFC]">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-emerald-100/50 blur-[100px] animate-float"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-cyan-100/50 blur-[100px] animate-float-delayed"></div>
+      </div>
 
-      {/* MAIN WRAPPER */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-
-        {/* COMPACT INPUT AREA (TOP) */}
-        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
-          <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-slate-700 text-[18px]">document_scanner</span>
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Dual Package Feed</span>
-            </div>
-            <span className="text-xs text-slate-400 font-mono">CALIBRATION ISO/IEC 17025</span>
-          </div>
-
-          {/* Dual Scan Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Panel 1: Front of Package */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-700">1. Front Packaging (PDP)</span>
-                <div className="flex items-center gap-1">
-                  <div className="inline-flex rounded-full bg-white p-0.5 border border-slate-200 text-xs shadow-xs relative overflow-hidden">
-                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={(e) => setFrontFile(e.target.files?.[0] || null)} />
-                    <button className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium flex items-center gap-1 pointer-events-none hover:bg-slate-200">
-                      <span className="material-symbols-outlined text-[13px]">folder_open</span> File
-                    </button>
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* NAVIGATION */}
+        <header className="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-slate-200/60 shadow-sm">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <a className="flex items-center gap-3" href="#">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 p-[1px] shadow-sm">
+                  <div className="w-full h-full bg-white rounded-[11px] flex items-center justify-center text-slate-800 font-bold text-sm">
+                    FT
                   </div>
-                  <button onClick={() => startCamera('front')} className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-900 text-white text-xs font-medium shadow-xs hover:bg-slate-800">
-                    <span className="material-symbols-outlined text-[13px]">photo_camera</span> Camera
-                  </button>
                 </div>
-              </div>
-              <div className="relative bg-slate-100 text-slate-800 rounded-lg h-32 overflow-hidden flex items-center justify-center border-2 border-dashed border-slate-300 group">
-                {frontFile ? (
-                  <>
-                    <img src={URL.createObjectURL(frontFile)} alt="Front Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
-                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="font-display font-bold text-sm tracking-tight text-white mb-2 text-center px-2 truncate max-w-[90%]">{frontFile.name}</span>
-                      <button onClick={() => setFrontFile(null)} className="px-3 py-1 bg-rose-500 text-white text-xs font-bold rounded-full hover:bg-rose-600">Remove</button>
-                    </div>
-                  </>
-                ) : (
-                  <span className="font-display font-bold text-sm tracking-tight text-slate-400 z-10">No Image</span>
-                )}
-              </div>
+                <span className="font-display font-bold tracking-tight text-slate-900 text-xl">FoodTruth</span>
+              </a>
+              <span className="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-200">
+                Powered by Gemini
+              </span>
             </div>
+            <div className="flex items-center gap-4">
+              <a className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors" href="#">How We Test</a>
+              <a href="https://github.com/dasouvik122005/FoodTruth" target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full glass-button flex items-center justify-center cursor-pointer">
+                <span className="material-symbols-outlined text-[20px]">code</span>
+              </a>
+            </div>
+          </div>
+        </header>
 
-            {/* Panel 2: Back of Package */}
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-700">2. Mandatory Nutrition Panel</span>
-                <div className="flex items-center gap-1">
-                  <div className="inline-flex rounded-full bg-white p-0.5 border border-slate-200 text-xs shadow-xs relative overflow-hidden">
-                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={(e) => setBackFile(e.target.files?.[0] || null)} />
-                    <button className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium flex items-center gap-1 pointer-events-none hover:bg-slate-200">
-                      <span className="material-symbols-outlined text-[13px]">folder_open</span> File
-                    </button>
-                  </div>
-                  <button onClick={() => startCamera('back')} className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-900 text-white text-xs font-medium shadow-xs hover:bg-slate-800">
-                    <span className="material-symbols-outlined text-[13px]">photo_camera</span> Camera
-                  </button>
+        <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-12 flex flex-col items-center">
+          
+          {/* HERO SECTION */}
+          <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+            <h1 className="text-4xl sm:text-6xl font-display font-black tracking-tight text-slate-900 mb-6 leading-tight">
+              Discover the <span className="text-gradient">Truth</span> <br className="hidden sm:block" /> Behind Your Food
+            </h1>
+            <p className="text-lg sm:text-xl text-slate-600 font-medium leading-relaxed px-4">
+              Upload your packaging. Let our AI instantly decode the ingredients, detect hidden sugars, and analyze true protein quality.
+            </p>
+          </div>
+
+          {/* INPUT AREA */}
+          <section className="w-full max-w-4xl glass-card rounded-3xl p-6 sm:p-8 mb-12 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500"></div>
+            
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 shadow-sm">
+                  <span className="material-symbols-outlined text-emerald-600">document_scanner</span>
                 </div>
-              </div>
-              <div className="relative bg-slate-100 text-slate-800 rounded-lg h-32 overflow-hidden flex items-center justify-center border-2 border-dashed border-slate-300 group">
-                {backFile ? (
-                  <>
-                    <img src={URL.createObjectURL(backFile)} alt="Back Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
-                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="font-display font-bold text-sm tracking-tight text-white mb-2 text-center px-2 truncate max-w-[90%]">{backFile.name}</span>
-                      <button onClick={() => setBackFile(null)} className="px-3 py-1 bg-rose-500 text-white text-xs font-bold rounded-full hover:bg-rose-600">Remove</button>
-                    </div>
-                  </>
-                ) : (
-                  <span className="font-display font-bold text-sm tracking-tight text-slate-400 z-10">No Image</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Action Button Centered */}
-          <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
-            <button disabled={isLoading} onClick={handleAudit} className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 disabled:bg-slate-700 hover:bg-slate-800 active:scale-[0.99] text-white font-medium text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2">
-              {isLoading ? (
-                <span className="material-symbols-outlined text-[18px] animate-spin text-amber-400">progress_activity</span>
-              ) : (
-                <span className="material-symbols-outlined text-[18px] text-amber-400">bolt</span>
-              )}
-              <span className="">{isLoading ? "Processing..." : "Audit Packaging"}</span>
-            </button>
-            <span className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-1 sm:mt-0">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-              Instant AI & Lab Correlation Ready
-            </span>
-          </div>
-        </section>
-
-        {/* Error Banner */}
-        {error && (
-          <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl shadow-sm">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <span className="material-symbols-outlined text-rose-500">error</span>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-rose-700 font-medium">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* RESULTS SECTION */}
-        {result && (
-          <>
-            {result.status === "MISSING_PANEL" && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 shadow-sm flex gap-3 items-start">
-                <span className="material-symbols-outlined text-amber-500">warning</span>
                 <div>
-                  <h3 className="text-sm font-bold text-amber-800">Incomplete Information Detected</h3>
-                  <p className="text-xs text-amber-700 mt-1">Please ensure photo #2 clearly displays the Nutrition Facts table and Ingredients list. We've proceeded with fallback estimates based on available text.</p>
+                  <h2 className="text-lg font-bold text-slate-900">Dual Package Analysis</h2>
+                  <p className="text-xs text-slate-500">Upload front branding and back nutrition panel</p>
                 </div>
               </div>
-            )}
-            {/* CARD 1: THE INSTANT VERDICT BANNER */}
-            <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <span className="text-xs font-mono text-slate-400 uppercase tracking-wider block mb-1">Consumer Inspection Report</span>
-                  <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight text-slate-900">
-                    {result.product_name || "Analyzed Product"} <span className="text-slate-500 font-normal text-base sm:text-lg">({result.serving_size_str || "Serving Size Unknown"})</span>
-                  </h1>
-                </div>
-                <div className="self-start sm:self-center">
-                  <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-black tracking-wide bg-rose-50 text-rose-700 border-2 border-rose-400/70 shadow-sm ring-2 ring-rose-200">
-                    <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-600 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-600"></span>
-                    </span>
-                    <span className="">{result.verdict?.overall_label || "VERDICT READY"}</span>
+            </div>
+
+            {/* Dual Scan Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Panel 1: Front of Package */}
+              <div className="rounded-2xl border border-slate-200 bg-white/60 p-4 flex flex-col group hover:border-emerald-300 transition-colors shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] border border-slate-200">1</span>
+                    Front Packaging
                   </span>
-                </div>
-              </div>
-              {/* Exactly ONE punchy takeaway sentence */}
-              <div className="p-4 rounded-xl bg-rose-50/60 border border-rose-100">
-                <p className="text-base sm:text-[17px] font-bold text-slate-900 leading-snug">
-                  Verdict: <span className="text-slate-900">{result.verdict?.overall_label || "Please review below"}</span>
-                </p>
-              </div>
-            </section>
-
-            {/* CARD 2: VISUAL IMPACT METERS */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Meter A: Blood Sugar Spike Risk */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    <span className="">Metabolic Impact</span>
-                    <span className="material-symbols-outlined text-rose-500 text-[18px]">show_chart</span>
-                  </div>
-                  <h2 className="text-sm font-bold text-slate-700 mb-3">Blood Sugar Spike Risk</h2>
-                  {/* 3-Segment Visual Meter */}
-                  <div className="grid grid-cols-3 gap-1.5 h-3 mb-2">
-                    <div className={`rounded-sm ${['LOW', 'MODERATE', 'HIGH'].includes(result.sweetener_audit?.overall_glycemic_risk) ? 'bg-rose-400' : 'bg-slate-200'}`} title="Low"></div>
-                    <div className={`rounded-sm ${['MODERATE', 'HIGH'].includes(result.sweetener_audit?.overall_glycemic_risk) ? 'bg-rose-500' : 'bg-slate-200'}`} title="Moderate"></div>
-                    <div className={`rounded-sm ${result.sweetener_audit?.overall_glycemic_risk === 'HIGH' ? 'bg-rose-600 shadow-xs ring-2 ring-rose-200' : 'bg-slate-200'}`} title="High"></div>
-                  </div>
-                  <div className="flex justify-between text-[10px] font-semibold text-slate-400 uppercase mb-4">
-                    <span className="">Low</span>
-                    <span className="">Moderate</span>
-                    <span className={result.sweetener_audit?.overall_glycemic_risk === 'HIGH' ? "text-rose-600 font-bold" : ""}>High</span>
-                  </div>
-                  {/* Big status label */}
-                  <div className="flex items-center gap-1.5 text-rose-600 font-black text-lg">
-                    <span className="material-symbols-outlined text-[20px]">error</span>
-                    <span className="">{result.sweetener_audit?.overall_glycemic_risk} SPIKE</span>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100">
-                  Sweeteners Found: {result.sweetener_audit?.sweeteners_found?.map((s: any) => s.name).join(', ') || 'None'}
-                </p>
-              </div>
-
-              {/* Meter B: True Protein Quality */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    <span className="">Bioavailability</span>
-                    <span className="material-symbols-outlined text-amber-500 text-[18px]">layers</span>
-                  </div>
-                  <h2 className="text-sm font-bold text-slate-700 mb-3">True Protein Quality</h2>
-                  {/* 3-Tier Visual Stack */}
-                  <div className="flex items-center gap-1 text-[11px] font-semibold mb-2">
-                    <span className={`flex-1 py-1 text-center rounded ${result.protein_audit?.source_tier?.includes('Tier 1') ? 'bg-emerald-500 text-white shadow-xs font-bold ring-2 ring-emerald-200' : 'bg-slate-100 text-slate-400'}`}>Dairy (Whey)</span>
-                    <span className="material-symbols-outlined text-slate-300 text-[14px]">arrow_forward</span>
-                    <span className={`flex-1 py-1 text-center rounded ${result.protein_audit?.source_tier?.includes('Tier 2') ? 'bg-amber-500 text-white shadow-xs font-bold ring-2 ring-amber-200' : 'bg-slate-100 text-slate-400'}`}>Soy / Plant</span>
-                    <span className="material-symbols-outlined text-slate-300 text-[14px]">arrow_forward</span>
-                    <span className={`flex-1 py-1 text-center rounded ${result.protein_audit?.source_tier?.includes('Tier 3') ? 'bg-slate-500 text-white shadow-xs font-bold' : 'bg-slate-100 text-slate-400'}`}>Filler</span>
-                  </div>
-                  <div className="h-1 mb-4"></div>
-                  {/* Big status label */}
-                  <div className="flex items-center gap-1.5 text-amber-600 font-black text-lg">
-                    <span className="material-symbols-outlined text-[20px]">pie_chart</span>
-                    <span className="">{result.protein_audit?.true_source?.toUpperCase() || 'UNKNOWN'}</span>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100">
-                  {result.protein_audit?.sprinkle_trick_detected ? "Protein Dilution Verified" : "No sprinkle trick detected"}
-                </p>
-              </div>
-
-              {/* Meter C: Calorie Efficiency (P:Cal) */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                    <span className="">P:Cal Density</span>
-                    <span className="material-symbols-outlined text-slate-700 text-[18px]">battery_charging_full</span>
-                  </div>
-                  <h2 className="text-sm font-bold text-slate-700 mb-3">Calorie Efficiency</h2>
-                  {/* Horizontal progress bar dial */}
-                  <div className="space-y-1.5 mb-3">
-                    <div className="flex justify-between text-xs">
-                      <span className="font-medium text-slate-600">Protein Ratio</span>
-                      <span className="font-bold text-slate-900">{result.pcal_ratio?.efficiency_pct || 0}% Target Yield</span>
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={(e) => setFrontFile(e.target.files?.[0] || null)} />
+                      <button className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                        <span className="material-symbols-outlined text-[14px]">upload_file</span> Upload
+                      </button>
                     </div>
-                    <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200">
-                      <div className="bg-slate-800 h-full rounded-full transition-all" style={{ width: `${Math.min(100, result.pcal_ratio?.efficiency_pct || 0)}%` }}></div>
-                    </div>
-                  </div>
-                  {/* Big metric label */}
-                  <div className="flex items-center gap-1.5 text-slate-900 font-black text-lg">
-                    <span className="material-symbols-outlined text-[20px] text-slate-600">fitness_center</span>
-                    <span className="">{result.pcal_ratio?.efficiency_pct || 0}% Pure Protein Cal</span>
+                    <button onClick={() => startCamera('front')} className="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                      <span className="material-symbols-outlined text-[14px]">photo_camera</span>
+                    </button>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100">
-                  {result.pcal_ratio?.classification || "Unknown"}
-                </p>
+                <div className="relative bg-slate-50 rounded-xl h-40 overflow-hidden flex items-center justify-center border border-dashed border-slate-300 group-hover:border-emerald-400 transition-colors">
+                  {frontFile ? (
+                    <>
+                      <img src={URL.createObjectURL(frontFile)} alt="Front Preview" className="absolute inset-0 w-full h-full object-cover opacity-90" />
+                      <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                        <span className="font-bold text-sm text-slate-900 mb-3 text-center px-4 truncate w-full">{frontFile.name}</span>
+                        <button onClick={() => setFrontFile(null)} className="px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-lg shadow-sm transition-colors">Remove</button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center text-slate-400">
+                      <span className="material-symbols-outlined text-4xl mb-2 opacity-60 text-slate-300">add_photo_alternate</span>
+                      <span className="text-xs font-semibold">No image selected</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </section>
 
-            {/* CARD 3: "WILL THIS WORK FOR YOU?" (THE 5-SECOND DECISION) */}
-            <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
-              <div>
-                <h2 className="text-base font-bold text-slate-900">Will This Work For You?</h2>
-                <p className="text-xs text-slate-500">Fast 5-second clinical indication guide based on current formula testing.</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Left: Good For */}
-                <div className="rounded-xl border border-emerald-500/80 bg-[#F0FDF4] p-5 flex flex-col justify-between">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-base font-bold text-emerald-800">✅ Good For:</span>
+              {/* Panel 2: Back of Package */}
+              <div className="rounded-2xl border border-slate-200 bg-white/60 p-4 flex flex-col group hover:border-cyan-300 transition-colors shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-[10px] border border-slate-200">2</span>
+                    Nutrition Panel
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={(e) => setBackFile(e.target.files?.[0] || null)} />
+                      <button className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                        <span className="material-symbols-outlined text-[14px]">upload_file</span> Upload
+                      </button>
                     </div>
-                    <ul className="space-y-2.5 text-xs sm:text-sm text-emerald-950 font-medium">
-                      {result.verdict?.works_if?.map((item: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-emerald-600 text-[18px] shrink-0 mt-0.5">check_circle</span>
-                          <span className="">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <button onClick={() => startCamera('back')} className="px-3 py-1.5 rounded-lg bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-700 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                      <span className="material-symbols-outlined text-[14px]">photo_camera</span>
+                    </button>
                   </div>
                 </div>
-                {/* Right: Avoid If */}
-                <div className="rounded-xl border border-rose-500/80 bg-[#FEF2F2] p-5 flex flex-col justify-between">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-base font-bold text-rose-800">⚠️ Avoid If:</span>
+                <div className="relative bg-slate-50 rounded-xl h-40 overflow-hidden flex items-center justify-center border border-dashed border-slate-300 group-hover:border-cyan-400 transition-colors">
+                  {backFile ? (
+                    <>
+                      <img src={URL.createObjectURL(backFile)} alt="Back Preview" className="absolute inset-0 w-full h-full object-cover opacity-90" />
+                      <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
+                        <span className="font-bold text-sm text-slate-900 mb-3 text-center px-4 truncate w-full">{backFile.name}</span>
+                        <button onClick={() => setBackFile(null)} className="px-4 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-lg shadow-sm transition-colors">Remove</button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center text-slate-400">
+                      <span className="material-symbols-outlined text-4xl mb-2 opacity-60 text-slate-300">receipt_long</span>
+                      <span className="text-xs font-semibold">No image selected</span>
                     </div>
-                    <ul className="space-y-2.5 text-xs sm:text-sm text-rose-950 font-medium">
-                      {result.verdict?.wont_work_if?.map((item: string, i: number) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="material-symbols-outlined text-rose-600 text-[18px] shrink-0 mt-0.5">cancel</span>
-                          <span className="">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  )}
                 </div>
               </div>
-            </section>
+            </div>
 
-            {/* CARD 4: DEEP-DIVE SCIENCE (COLLAPSIBLE ACCORDION) */}
-            <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <button className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition cursor-pointer" onClick={() => setShowDeepDive(!showDeepDive)}>
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-slate-500 text-[20px]">science</span>
-                  <span className="text-xs sm:text-sm font-bold text-slate-800">View Lab Metrics & FSSAI Legal References</span>
-                  <span className="text-[11px] font-mono bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">Raw Science Data</span>
+            {/* Action Button Centered */}
+            <div className="mt-8 flex justify-center">
+              <button 
+                disabled={isLoading} 
+                onClick={handleAudit} 
+                className="group relative px-8 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm sm:text-base rounded-full shadow-lg hover:shadow-xl hover:shadow-slate-900/20 disabled:opacity-70 disabled:cursor-not-allowed transition-all active:scale-95 overflow-hidden"
+              >
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-emerald-400 via-cyan-500 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity z-0"></div>
+                <div className="relative z-10 flex items-center gap-2">
+                  {isLoading ? (
+                    <span className="material-symbols-outlined text-[20px] animate-spin text-emerald-400">autorenew</span>
+                  ) : (
+                    <span className="material-symbols-outlined text-[20px] text-emerald-400">science</span>
+                  )}
+                  <span>{isLoading ? "Running AI Audit..." : "Analyze Packaging"}</span>
                 </div>
-                <span className={`material-symbols-outlined text-slate-400 text-[20px] transition-transform duration-200 ${showDeepDive ? 'rotate-180' : ''}`}>
-                  expand_more
-                </span>
               </button>
-              {/* Collapsible Container */}
-              {showDeepDive && (
-                <div className="border-t border-slate-200 p-5 bg-slate-50/50">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse text-xs sm:text-sm">
-                      <thead>
-                        <tr className="border-b border-slate-200 text-slate-500 font-semibold text-xs uppercase tracking-wider">
-                          <th className="py-2.5 px-3">Parameter / Instrument</th>
-                          <th className="py-2.5 px-3">Recorded Value</th>
-                          <th className="py-2.5 px-3">Statutory Rule / Regulatory Citation</th>
-                          <th className="py-2.5 px-3 text-right">Severity</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200/80 text-slate-700">
-                        {result.fssai_violations?.map((v: any, i: number) => (
-                          <tr key={i} className="hover:bg-white transition-colors">
-                            <td className="py-2.5 px-3 font-semibold text-slate-900">FSSAI Violation</td>
-                            <td className="py-2.5 px-3 font-mono text-rose-700 font-medium">{v.rule_reference}</td>
-                            <td className="py-2.5 px-3 text-slate-500">{v.description}</td>
-                            <td className="py-2.5 px-3 text-right">
-                              <span className="inline-block px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800">Breach</span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+            </div>
+          </section>
+
+          {/* Error Banner */}
+          {error && (
+            <div className="w-full max-w-4xl glass-card border-rose-200 bg-rose-50 p-5 rounded-2xl mb-8 flex items-start gap-4">
+              <span className="material-symbols-outlined text-rose-500 text-2xl">error_outline</span>
+              <div>
+                <h3 className="text-rose-800 font-bold mb-1">Analysis Failed</h3>
+                <p className="text-sm text-rose-700">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {/* RESULTS SECTION */}
+          {result && (
+            <div className="w-full max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-700">
+              
+              {/* CARD 1: THE INSTANT VERDICT BANNER */}
+              <section className="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-white">
+                <div className="absolute -right-20 -top-20 w-64 h-64 bg-emerald-100 blur-[80px] rounded-full"></div>
+                
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative z-10">
+                  <div>
+                    <span className="text-xs font-mono text-slate-400 tracking-widest uppercase block mb-2 font-semibold">AI Audit Complete</span>
+                    <h1 className="text-2xl sm:text-4xl font-display font-black text-slate-900 mb-2">
+                      {result.product_name || "Analyzed Product"}
+                    </h1>
+                    <span className="text-slate-500 bg-slate-50 px-3 py-1 rounded-full text-sm border border-slate-200 font-medium">
+                      Serving: {result.serving_size_str || "Unknown"}
+                    </span>
+                  </div>
+                  <div className="shrink-0">
+                    <div className="inline-flex flex-col items-center justify-center w-32 h-32 rounded-full border-4 border-slate-100 bg-white shadow-lg shadow-slate-200/50">
+                      <span className="text-3xl mb-1">{result.verdict?.overall_label === 'PASS' ? '✅' : '⚠️'}</span>
+                      <span className="text-xs font-bold text-slate-400 tracking-wider">VERDICT</span>
+                    </div>
                   </div>
                 </div>
-              )}
-            </section>
-          </>
-        )}
-      </main>
 
-      {/* CLEAN MINIMAL FOOTER */}
-      <footer className="mt-12 py-6 text-center text-xs text-slate-400 border-t border-slate-200">
-        © 2026 FoodTruth • Built for Hacktoberfest 2026
-      </footer>
+                <div className="mt-8 p-5 rounded-2xl bg-emerald-50 border border-emerald-100 border-l-4 border-l-emerald-500">
+                  <p className="text-lg font-semibold text-emerald-900 leading-relaxed">
+                    {result.verdict?.overall_label || "Please review the detailed metrics below."}
+                  </p>
+                </div>
+              </section>
+
+              {/* CARD 2: VISUAL IMPACT METERS */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                {/* Meter A: Blood Sugar Spike Risk */}
+                <div className="glass-card bg-white rounded-2xl p-6 flex flex-col justify-between group hover:shadow-2xl hover:shadow-slate-200/50 transition-shadow border border-slate-100">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 mb-4 border border-rose-100">
+                      <span className="material-symbols-outlined text-[20px]">show_chart</span>
+                    </div>
+                    <h2 className="text-lg font-bold text-slate-900 mb-1">Blood Sugar Risk</h2>
+                    <p className="text-xs text-slate-500 font-medium mb-6">Metabolic impact level</p>
+                    
+                    <div className="space-y-2 mb-6">
+                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200/50">
+                        <div className={`h-full ${['LOW', 'MODERATE', 'HIGH'].includes(result.sweetener_audit?.overall_glycemic_risk) ? 'bg-emerald-400' : 'bg-transparent'} w-1/3 border-r border-slate-200/50`}></div>
+                        <div className={`h-full ${['MODERATE', 'HIGH'].includes(result.sweetener_audit?.overall_glycemic_risk) ? 'bg-amber-400' : 'bg-transparent'} w-1/3 border-r border-slate-200/50`}></div>
+                        <div className={`h-full ${result.sweetener_audit?.overall_glycemic_risk === 'HIGH' ? 'bg-rose-500' : 'bg-transparent'} w-1/3`}></div>
+                      </div>
+                      <div className="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span>Low</span>
+                        <span>Med</span>
+                        <span>High</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100">
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      <span className="text-slate-800 font-semibold">Sweeteners: </span>
+                      {result.sweetener_audit?.sweeteners_found?.map((s: any) => s.name).join(', ') || 'None detected'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Meter B: True Protein Quality */}
+                <div className="glass-card bg-white rounded-2xl p-6 flex flex-col justify-between group hover:shadow-2xl hover:shadow-slate-200/50 transition-shadow border border-slate-100">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 mb-4 border border-amber-100">
+                      <span className="material-symbols-outlined text-[20px]">layers</span>
+                    </div>
+                    <h2 className="text-lg font-bold text-slate-900 mb-1">Protein Quality</h2>
+                    <p className="text-xs text-slate-500 font-medium mb-6">Bioavailability score</p>
+                    
+                    <div className="flex flex-col gap-2 mb-6">
+                      <div className={`py-1.5 px-3 text-xs text-center rounded-lg font-bold border ${result.protein_audit?.source_tier?.includes('Tier 1') ? 'bg-emerald-50 border-emerald-200 text-emerald-700 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>High (Whey/Dairy)</div>
+                      <div className={`py-1.5 px-3 text-xs text-center rounded-lg font-bold border ${result.protein_audit?.source_tier?.includes('Tier 2') ? 'bg-amber-50 border-amber-200 text-amber-700 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>Med (Soy/Plant)</div>
+                      <div className={`py-1.5 px-3 text-xs text-center rounded-lg font-bold border ${result.protein_audit?.source_tier?.includes('Tier 3') ? 'bg-rose-50 border-rose-200 text-rose-700 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>Low (Fillers)</div>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100">
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      <span className="text-slate-800 font-semibold">Verdict: </span>
+                      {result.protein_audit?.sprinkle_trick_detected ? "Dilution Detected" : "Pure Source"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Meter C: Calorie Efficiency */}
+                <div className="glass-card bg-white rounded-2xl p-6 flex flex-col justify-between group hover:shadow-2xl hover:shadow-slate-200/50 transition-shadow border border-slate-100">
+                  <div>
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 mb-4 border border-blue-100">
+                      <span className="material-symbols-outlined text-[20px]">battery_charging_full</span>
+                    </div>
+                    <h2 className="text-lg font-bold text-slate-900 mb-1">Calorie Efficiency</h2>
+                    <p className="text-xs text-slate-500 font-medium mb-6">P:Cal density ratio</p>
+                    
+                    <div className="space-y-2 mb-6">
+                      <div className="flex justify-between items-end">
+                        <span className="text-3xl font-display font-black text-slate-900">{result.pcal_ratio?.efficiency_pct || 0}%</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Target Yield</span>
+                      </div>
+                      <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden border border-slate-200/50">
+                        <div className="bg-gradient-to-r from-blue-400 to-cyan-400 h-full rounded-full transition-all duration-1000 ease-out" style={{ width: `${Math.min(100, result.pcal_ratio?.efficiency_pct || 0)}%` }}></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-slate-100">
+                    <p className="text-xs text-slate-500 leading-relaxed">
+                      <span className="text-slate-800 font-semibold">Class: </span>
+                      {result.pcal_ratio?.classification || "Unknown"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD 3: "WILL THIS WORK FOR YOU?" */}
+              <section className="glass-card bg-white rounded-3xl p-6 sm:p-8 border border-slate-100">
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-slate-900">Actionable Summary</h2>
+                  <p className="text-sm text-slate-500">Fast clinical indication guide based on current formula testing.</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Left: Good For */}
+                  <div className="rounded-2xl border border-emerald-200 bg-emerald-50/50 p-6 shadow-sm">
+                    <h3 className="text-emerald-700 font-bold mb-4 flex items-center gap-2">
+                      <span className="material-symbols-outlined">check_circle</span> Good For
+                    </h3>
+                    <ul className="space-y-3">
+                      {result.verdict?.works_if?.map((item: string, i: number) => (
+                        <li key={i} className="flex items-start gap-3 text-sm text-emerald-900 font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0 shadow-sm"></span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Right: Avoid If */}
+                  <div className="rounded-2xl border border-rose-200 bg-rose-50/50 p-6 shadow-sm">
+                    <h3 className="text-rose-700 font-bold mb-4 flex items-center gap-2">
+                      <span className="material-symbols-outlined">cancel</span> Avoid If
+                    </h3>
+                    <ul className="space-y-3">
+                      {result.verdict?.wont_work_if?.map((item: string, i: number) => (
+                        <li key={i} className="flex items-start gap-3 text-sm text-rose-900 font-medium">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mt-1.5 shrink-0 shadow-sm"></span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </section>
+            </div>
+          )}
+        </main>
+
+        <footer className="mt-auto py-8 text-center text-sm text-slate-400 border-t border-slate-200 relative z-10">
+          <p className="font-medium">© 2026 FoodTruth. Built with Gemini AI.</p>
+        </footer>
+      </div>
 
       {/* Hidden inputs for mobile camera capture */}
       <input type="file" accept="image/*" capture="environment" id="hidden-camera-front" className="hidden" style={{ display: 'none' }} onChange={(e) => setFrontFile(e.target.files?.[0] || null)} />
@@ -462,15 +443,15 @@ export default function App() {
 
       {/* CAMERA MODAL (DESKTOP) */}
       {cameraActive && (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex flex-col items-center justify-center p-4">
-          <div className="bg-white rounded-2xl overflow-hidden w-full max-w-lg shadow-2xl">
+        <div className="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-md flex flex-col items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden w-full max-w-lg shadow-2xl">
             <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="font-bold text-slate-800">Take Photo</h3>
-              <button onClick={stopCamera} className="text-slate-500 hover:text-rose-500">
+              <h3 className="font-bold text-slate-900">Capture Image</h3>
+              <button onClick={stopCamera} className="text-slate-400 hover:text-slate-900 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
-            <div className="relative bg-black aspect-video flex items-center justify-center">
+            <div className="relative bg-slate-900 aspect-[4/3] flex items-center justify-center overflow-hidden">
               <video
                 id="camera-video"
                 autoPlay
@@ -478,11 +459,14 @@ export default function App() {
                 className="w-full h-full object-cover"
                 ref={(vid) => { if (vid && videoStream && vid.srcObject !== videoStream) vid.srcObject = videoStream; }}
               />
+              <div className="absolute inset-0 pointer-events-none border-[40px] border-slate-900/20">
+                <div className="w-full h-full border-2 border-white/80 border-dashed rounded-xl shadow-[0_0_10px_rgba(0,0,0,0.3)]"></div>
+              </div>
             </div>
-            <div className="p-4 flex justify-center bg-slate-50">
-              <button onClick={capturePhoto} className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center gap-2 shadow-sm transition-transform active:scale-95">
-                <span className="material-symbols-outlined">photo_camera</span>
-                Capture Image
+            <div className="p-6 flex justify-center bg-slate-50">
+              <button onClick={capturePhoto} className="px-8 py-3 bg-slate-900 text-white hover:bg-slate-800 font-bold rounded-full flex items-center gap-2 transition-transform active:scale-95 shadow-lg shadow-slate-900/20">
+                <span className="material-symbols-outlined">camera</span>
+                Capture Photo
               </button>
             </div>
           </div>
