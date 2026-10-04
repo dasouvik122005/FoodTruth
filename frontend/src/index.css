@@ -1,9 +1,13 @@
 @import "tailwindcss";
 
-body {
-  @apply bg-slate-900 text-slate-50 antialiased;
+@theme {
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Geist", sans-serif;
 }
 
-::selection {
-  @apply bg-blue-500/30;
+@layer base {
+  body {
+    -webkit-font-smoothing: antialiased;
+    @apply bg-[#F8FAFC] text-slate-800 font-sans min-h-screen flex flex-col;
+  }
 }

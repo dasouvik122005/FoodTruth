@@ -1,8 +1,11 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Header
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
+import os
+
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 from extractor import extract_label_data
@@ -15,7 +18,7 @@ app = FastAPI(title="FoodTruth API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -31,33 +34,53 @@ async def audit_demo(payload_name: str = Form(...)):
         
     ext_res = SAMPLES[payload_name]
     if ext_res.status == "SUCCESS":
+        if not ext_res.data.has_nutrition_table or not ext_res.data.has_ingredient_list:
+            raise HTTPException(status_code=422, detail={"status": "MISSING_PANEL", "reason": "Missing mandatory nutrition table or ingredient list."})
         return run_audits(ext_res.data)
     else:
         raise HTTPException(status_code=400, detail=ext_res.rejection_reason)
 
 @app.post("/api/audit/upload", response_model=AuditResult)
+@app.post("/api/audit", response_model=AuditResult)
 async def audit_upload(
-    front_image: Optional[UploadFile] = File(None),
-    back_image: Optional[UploadFile] = File(None),
+    request: Request,
     x_api_key: Optional[str] = Header(None)
 ):
-    api_key = x_api_key or os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
+    form = await request.form()
+    # Accept multiple common naming conventions
+    front_file = form.get("front_image") or form.get("front") or form.get("frontFile")
+    back_file = form.get("back_image") or form.get("back") or form.get("backFile")
+
+    if not front_file or not back_file:
+        raise HTTPException(
+            status_code=400,
+            detail="Both front and back packaging images are required."
+        )
+
+    front_bytes = await front_file.read()
+    back_bytes = await back_file.read()
+
+    api_key = x_api_key or os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    if api_key:
+        os.environ["GEMINI_API_KEY"] = api_key
+        os.environ["GOOGLE_API_KEY"] = api_key
+        
     if not api_key:
         raise HTTPException(status_code=401, detail="Missing API Key. Please provide x-api-key header.")
         
-    if not front_image and not back_image:
-        raise HTTPException(status_code=400, detail="Must provide at least one image.")
-        
-    front_bytes = await front_image.read() if front_image else None
-    back_bytes = await back_image.read() if back_image else None
-    
     try:
         ext_res = extract_label_data(api_key, front_bytes, back_bytes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"OCR Extraction failed: {str(e)}")
         
-    if ext_res.status == "SUCCESS":
-        return run_audits(ext_res.data)
+    if ext_res.status in ["SUCCESS", "MISSING_PANEL"] and ext_res.data:
+        audit_res = run_audits(ext_res.data)
+        if ext_res.status == "MISSING_PANEL" or not ext_res.data.has_nutrition_table or not ext_res.data.has_ingredient_list:
+            audit_res.status = "MISSING_PANEL"
+            audit_res.warnings.append("Nutrition table partially illegible; estimated from available text.")
+        else:
+            audit_res.status = "SUCCESS"
+        return audit_res
     else:
         # Pass the exact status back to the frontend for the Recovery Card
         raise HTTPException(status_code=422, detail={"status": ext_res.status, "reason": ext_res.rejection_reason})

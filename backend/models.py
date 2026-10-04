@@ -2,19 +2,19 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 
 class ServingSize(BaseModel):
-    value: float
-    unit: Literal["g", "ml"]
+    value: Optional[float] = Field(default=0.0)
+    unit: Optional[str] = Field(default="g")
 
 class MacrosPerServing(BaseModel):
-    energy_kcal: float
-    protein_g: float
-    total_carbs_g: float
-    total_sugars_g: float
-    added_sugars_g: float
-    polyols_g: float
-    total_fat_g: float
-    saturated_fat_g: float
-    dietary_fiber_g: float
+    energy_kcal: Optional[float] = Field(default=0.0)
+    protein_g: Optional[float] = Field(default=0.0)
+    total_carbs_g: Optional[float] = Field(default=0.0)
+    total_sugars_g: Optional[float] = Field(default=0.0)
+    added_sugars_g: Optional[float] = Field(default=0.0)
+    polyols_g: Optional[float] = Field(default=0.0)
+    total_fat_g: Optional[float] = Field(default=0.0)
+    saturated_fat_g: Optional[float] = Field(default=0.0)
+    dietary_fiber_g: Optional[float] = Field(default=0.0)
 
 class ParentheticalSubIngredient(BaseModel):
     parent: str
@@ -22,9 +22,9 @@ class ParentheticalSubIngredient(BaseModel):
 
 class ExtractionData(BaseModel):
     product_name: str
-    serving_size: ServingSize
+    serving_size: Optional[ServingSize] = Field(default_factory=ServingSize)
     front_claims: List[str]
-    macros_per_serving: MacrosPerServing
+    macros_per_serving: Optional[MacrosPerServing] = Field(default_factory=MacrosPerServing)
     ingredients_raw: List[str]
     parenthetical_sub_ingredients: List[ParentheticalSubIngredient]
     disease_or_medicinal_claims: List[str] = Field(default_factory=list)
@@ -32,7 +32,7 @@ class ExtractionData(BaseModel):
     has_ingredient_list: bool
 
 class ExtractionResult(BaseModel):
-    status: Literal["SUCCESS", "BLURRY", "NOT_PACKAGING", "MISSING_MANDATORY_PANEL", "PARSE_ERROR", "BLOCKED"]
+    status: Literal["SUCCESS", "BLURRY", "NOT_PACKAGING", "MISSING_MANDATORY_PANEL", "MISSING_PANEL", "PARSE_ERROR", "BLOCKED"]
     rejection_reason: Optional[str] = None
     data: Optional[ExtractionData] = None
 
@@ -75,6 +75,7 @@ class Verdict(BaseModel):
     wont_work_if: List[str]
 
 class AuditResult(BaseModel):
+    status: str = "SUCCESS"
     product_name: str
     serving_size_str: str
     sweetener_audit: SweetenerAudit
@@ -83,3 +84,4 @@ class AuditResult(BaseModel):
     disease_claim_flags: List[DiseaseClaimFlag]
     fssai_violations: List[FSSAIViolation]
     verdict: Verdict
+    warnings: List[str] = Field(default_factory=list)

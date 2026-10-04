@@ -150,7 +150,7 @@ def audit_protein(data: ExtractionData) -> ProteinAudit:
         sprinkle_trick = True
         
     return ProteinAudit(
-        declared_g=data.macros_per_serving.protein_g,
+        declared_g=data.macros_per_serving.protein_g or 0.0,
         source_tier=top_tier,
         true_source=true_source,
         sprinkle_trick_detected=sprinkle_trick
@@ -158,10 +158,11 @@ def audit_protein(data: ExtractionData) -> ProteinAudit:
 
 def audit_pcal(data: ExtractionData) -> PCaloRatio:
     macros = data.macros_per_serving
-    protein_cals = macros.protein_g * 4
+    protein_cals = (macros.protein_g or 0.0) * 4
+    energy = macros.energy_kcal or 0.0
     
-    if macros.energy_kcal > 0:
-        eff_pct = (protein_cals / macros.energy_kcal) * 100
+    if energy > 0:
+        eff_pct = (protein_cals / energy) * 100
     else:
         eff_pct = 0.0
         

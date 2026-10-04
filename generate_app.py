@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import os
+
+app_tsx_content = """import React, { useState } from 'react';
 
 const API_BASE = 'http://localhost:8000/api';
 
@@ -9,52 +11,6 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any | null>(null);
   const [showDeepDive, setShowDeepDive] = useState(false);
-  const [cameraActive, setCameraActive] = useState<'front' | 'back' | null>(null);
-  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
-
-  const startCamera = async (target: 'front' | 'back') => {
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-      const hiddenInput = document.getElementById(`hidden-camera-${target}`);
-      if (hiddenInput) hiddenInput.click();
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      setVideoStream(stream);
-      setCameraActive(target);
-    } catch (err) {
-      alert("Camera access denied or unavailable on this device.");
-    }
-  };
-
-  const stopCamera = () => {
-    if (videoStream) {
-      videoStream.getTracks().forEach(t => t.stop());
-    }
-    setVideoStream(null);
-    setCameraActive(null);
-  };
-
-  const capturePhoto = () => {
-    const video = document.getElementById('camera-video') as HTMLVideoElement;
-    if (video) {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const file = new File([blob], `${cameraActive}_captured.jpg`, { type: 'image/jpeg' });
-            if (cameraActive === 'front') setFrontFile(file);
-            else setBackFile(file);
-            stopCamera();
-          }
-        }, 'image/jpeg');
-      }
-    }
-  };
 
   const handleAudit = async () => {
     setIsLoading(true);
@@ -62,38 +18,19 @@ export default function App() {
     setResult(null);
 
     try {
-      if (!frontFile || !backFile) {
-        throw new Error("Please select both front and back packaging images.");
-      }
-
+      if (!frontFile && !backFile) throw new Error("Please provide at least one image.");
+      
       const formData = new FormData();
-      formData.append("front_image", frontFile, frontFile.name || "front.jpg");
-      formData.append("back_image", backFile, backFile.name || "back.jpg");
-
+      if (frontFile) formData.append('front_image', frontFile);
+      if (backFile) formData.append('back_image', backFile);
+      
       const res = await fetch(`${API_BASE}/audit/upload`, {
         method: 'POST',
         body: formData,
       });
-
-      if (!res.ok) {
-        let errorDetail = `Server Error (${res.status})`;
-        try {
-          const data = await res.json();
-          if (typeof data.detail === "string") {
-            errorDetail = data.detail;
-          } else if (Array.isArray(data.detail)) {
-            errorDetail = data.detail.map((e: any) => `${e.loc?.slice(1).join(".") || "field"}: ${e.msg}`).join(" | ");
-          } else if (data.detail) {
-            errorDetail = JSON.stringify(data.detail);
-          } else {
-            errorDetail = JSON.stringify(data);
-          }
-        } catch {
-          errorDetail = await res.text();
-        }
-        throw new Error(errorDetail);
-      }
+      
       const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Audit failed');
       setResult(data);
     } catch (err: any) {
       setError(err.message);
@@ -113,7 +50,7 @@ export default function App() {
               <span className="">FOODTRUTH</span>
             </a>
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-              Powered by Gemma 4 Multimodal
+              Consumer Truth Engine
             </span>
           </div>
           <div className="flex items-center gap-4">
@@ -124,10 +61,10 @@ export default function App() {
           </div>
         </div>
       </header>
-
+      
       {/* MAIN WRAPPER */}
       <main className="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-
+        
         {/* COMPACT INPUT AREA (TOP) */}
         <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
@@ -137,72 +74,50 @@ export default function App() {
             </div>
             <span className="text-xs text-slate-400 font-mono">CALIBRATION ISO/IEC 17025</span>
           </div>
-
+          
           {/* Dual Scan Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Panel 1: Front of Package */}
             <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-slate-700">1. Front Packaging (PDP)</span>
-                <div className="flex items-center gap-1">
-                  <div className="inline-flex rounded-full bg-white p-0.5 border border-slate-200 text-xs shadow-xs relative overflow-hidden">
-                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={(e) => setFrontFile(e.target.files?.[0] || null)} />
-                    <button className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium flex items-center gap-1 pointer-events-none hover:bg-slate-200">
-                      <span className="material-symbols-outlined text-[13px]">folder_open</span> File
-                    </button>
-                  </div>
-                  <button onClick={() => startCamera('front')} className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-900 text-white text-xs font-medium shadow-xs hover:bg-slate-800">
-                    <span className="material-symbols-outlined text-[13px]">photo_camera</span> Camera
+                <div className="inline-flex rounded-full bg-white p-0.5 border border-slate-200 text-xs shadow-xs relative overflow-hidden">
+                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onChange={(e) => setFrontFile(e.target.files?.[0] || null)} />
+                  <button className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white font-medium flex items-center gap-1 pointer-events-none">
+                    <span className="material-symbols-outlined text-[13px]">folder_open</span> Upload
                   </button>
                 </div>
               </div>
-              <div className="relative bg-slate-100 text-slate-800 rounded-lg h-32 overflow-hidden flex items-center justify-center border-2 border-dashed border-slate-300 group">
+              <div className="relative bg-slate-100 text-slate-800 rounded-lg h-24 overflow-hidden flex items-center justify-center border-2 border-dashed border-slate-300">
                 {frontFile ? (
-                  <>
-                    <img src={URL.createObjectURL(frontFile)} alt="Front Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
-                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="font-display font-bold text-sm tracking-tight text-white mb-2 text-center px-2 truncate max-w-[90%]">{frontFile.name}</span>
-                      <button onClick={() => setFrontFile(null)} className="px-3 py-1 bg-rose-500 text-white text-xs font-bold rounded-full hover:bg-rose-600">Remove</button>
-                    </div>
-                  </>
+                  <span className="font-display font-bold text-sm tracking-tight text-slate-800 z-10 px-2 text-center">{frontFile.name}</span>
                 ) : (
-                  <span className="font-display font-bold text-sm tracking-tight text-slate-400 z-10">No Image</span>
+                  <span className="font-display font-bold text-sm tracking-tight text-slate-400 z-10">Select Front Image</span>
                 )}
               </div>
             </div>
-
+            
             {/* Panel 2: Back of Package */}
             <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 flex flex-col justify-between">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold text-slate-700">2. Mandatory Nutrition Panel</span>
-                <div className="flex items-center gap-1">
-                  <div className="inline-flex rounded-full bg-white p-0.5 border border-slate-200 text-xs shadow-xs relative overflow-hidden">
-                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10" onChange={(e) => setBackFile(e.target.files?.[0] || null)} />
-                    <button className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-medium flex items-center gap-1 pointer-events-none hover:bg-slate-200">
-                      <span className="material-symbols-outlined text-[13px]">folder_open</span> File
-                    </button>
-                  </div>
-                  <button onClick={() => startCamera('back')} className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-900 text-white text-xs font-medium shadow-xs hover:bg-slate-800">
-                    <span className="material-symbols-outlined text-[13px]">photo_camera</span> Camera
+                <div className="inline-flex rounded-full bg-white p-0.5 border border-slate-200 text-xs shadow-xs relative overflow-hidden">
+                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onChange={(e) => setBackFile(e.target.files?.[0] || null)} />
+                  <button className="px-2.5 py-0.5 rounded-full bg-slate-900 text-white font-medium flex items-center gap-1 pointer-events-none">
+                    <span className="material-symbols-outlined text-[13px]">folder_open</span> Upload
                   </button>
                 </div>
               </div>
-              <div className="relative bg-slate-100 text-slate-800 rounded-lg h-32 overflow-hidden flex items-center justify-center border-2 border-dashed border-slate-300 group">
+              <div className="relative bg-slate-100 text-slate-800 rounded-lg h-24 overflow-hidden flex items-center justify-center border-2 border-dashed border-slate-300">
                 {backFile ? (
-                  <>
-                    <img src={URL.createObjectURL(backFile)} alt="Back Preview" className="absolute inset-0 w-full h-full object-cover opacity-80" />
-                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="font-display font-bold text-sm tracking-tight text-white mb-2 text-center px-2 truncate max-w-[90%]">{backFile.name}</span>
-                      <button onClick={() => setBackFile(null)} className="px-3 py-1 bg-rose-500 text-white text-xs font-bold rounded-full hover:bg-rose-600">Remove</button>
-                    </div>
-                  </>
+                  <span className="font-mono text-xs font-semibold text-slate-700 z-10 px-2 text-center">{backFile.name}</span>
                 ) : (
-                  <span className="font-display font-bold text-sm tracking-tight text-slate-400 z-10">No Image</span>
+                  <span className="font-mono text-xs font-semibold text-slate-400 z-10">Select Back Image</span>
                 )}
               </div>
             </div>
           </div>
-
+          
           {/* Action Button Centered */}
           <div className="mt-4 flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
             <button disabled={isLoading} onClick={handleAudit} className="w-full sm:w-auto px-6 py-2.5 bg-slate-900 disabled:bg-slate-700 hover:bg-slate-800 active:scale-[0.99] text-white font-medium text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2">
@@ -219,7 +134,7 @@ export default function App() {
             </span>
           </div>
         </section>
-
+        
         {/* Error Banner */}
         {error && (
           <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl shadow-sm">
@@ -237,15 +152,6 @@ export default function App() {
         {/* RESULTS SECTION */}
         {result && (
           <>
-            {result.status === "MISSING_PANEL" && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 shadow-sm flex gap-3 items-start">
-                <span className="material-symbols-outlined text-amber-500">warning</span>
-                <div>
-                  <h3 className="text-sm font-bold text-amber-800">Incomplete Information Detected</h3>
-                  <p className="text-xs text-amber-700 mt-1">Please ensure photo #2 clearly displays the Nutrition Facts table and Ingredients list. We've proceeded with fallback estimates based on available text.</p>
-                </div>
-              </div>
-            )}
             {/* CARD 1: THE INSTANT VERDICT BANNER */}
             <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -272,7 +178,7 @@ export default function App() {
                 </p>
               </div>
             </section>
-
+            
             {/* CARD 2: VISUAL IMPACT METERS */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Meter A: Blood Sugar Spike Risk */}
@@ -301,10 +207,10 @@ export default function App() {
                   </div>
                 </div>
                 <p className="text-xs text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100">
-                  Sweeteners Found: {result.sweetener_audit?.sweeteners_found?.map((s: any) => s.name).join(', ') || 'None'}
+                  Sweeteners Found: {result.sweetener_audit?.sweeteners_found?.map((s:any) => s.name).join(', ') || 'None'}
                 </p>
               </div>
-
+              
               {/* Meter B: True Protein Quality */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                 <div>
@@ -332,7 +238,7 @@ export default function App() {
                   {result.protein_audit?.sprinkle_trick_detected ? "Protein Dilution Verified" : "No sprinkle trick detected"}
                 </p>
               </div>
-
+              
               {/* Meter C: Calorie Efficiency (P:Cal) */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col justify-between">
                 <div>
@@ -362,7 +268,7 @@ export default function App() {
                 </p>
               </div>
             </section>
-
+            
             {/* CARD 3: "WILL THIS WORK FOR YOU?" (THE 5-SECOND DECISION) */}
             <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 sm:p-6 space-y-4">
               <div>
@@ -404,7 +310,7 @@ export default function App() {
                 </div>
               </div>
             </section>
-
+            
             {/* CARD 4: DEEP-DIVE SCIENCE (COLLAPSIBLE ACCORDION) */}
             <section className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
               <button className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition cursor-pointer" onClick={() => setShowDeepDive(!showDeepDive)}>
@@ -450,44 +356,22 @@ export default function App() {
           </>
         )}
       </main>
-
+      
       {/* CLEAN MINIMAL FOOTER */}
-      <footer className="mt-12 py-6 text-center text-xs text-slate-400 border-t border-slate-200">
-        © 2026 FoodTruth • Built for Hacktoberfest 2026
-      </footer>
-
-      {/* Hidden inputs for mobile camera capture */}
-      <input type="file" accept="image/*" capture="environment" id="hidden-camera-front" className="hidden" style={{ display: 'none' }} onChange={(e) => setFrontFile(e.target.files?.[0] || null)} />
-      <input type="file" accept="image/*" capture="environment" id="hidden-camera-back" className="hidden" style={{ display: 'none' }} onChange={(e) => setBackFile(e.target.files?.[0] || null)} />
-
-      {/* CAMERA MODAL (DESKTOP) */}
-      {cameraActive && (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex flex-col items-center justify-center p-4">
-          <div className="bg-white rounded-2xl overflow-hidden w-full max-w-lg shadow-2xl">
-            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-              <h3 className="font-bold text-slate-800">Take Photo</h3>
-              <button onClick={stopCamera} className="text-slate-500 hover:text-rose-500">
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div className="relative bg-black aspect-video flex items-center justify-center">
-              <video
-                id="camera-video"
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
-                ref={(vid) => { if (vid && videoStream && vid.srcObject !== videoStream) vid.srcObject = videoStream; }}
-              />
-            </div>
-            <div className="p-4 flex justify-center bg-slate-50">
-              <button onClick={capturePhoto} className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-full flex items-center gap-2 shadow-sm transition-transform active:scale-95">
-                <span className="material-symbols-outlined">photo_camera</span>
-                Capture Image
-              </button>
-            </div>
+      <footer className="border-t border-slate-200 bg-white py-4 mt-auto">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+          <p className="">© 2024 FoodTruth Consumer Forensics • Independent Public Lab Verification</p>
+          <div className="flex items-center gap-4">
+            <a className="hover:text-slate-600 transition" href="#">Privacy</a>
+            <a className="hover:text-slate-600 transition" href="#">Testing Protocol</a>
+            <a className="hover:text-slate-600 transition" href="#">FSSAI Index</a>
           </div>
         </div>
-      )}
+      </footer>
     </div>
   );
 }
+"""
+
+with open(r"C:\Users\RASHMI\FoodTruth\frontend\src\App.tsx", "w", encoding="utf-8") as f:
+    f.write(app_tsx_content)
