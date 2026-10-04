@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-slate-900 text-slate-50 antialiased;
+}
+
+::selection {
+  @apply bg-blue-500/30;
+}
