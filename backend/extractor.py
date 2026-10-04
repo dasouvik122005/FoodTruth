@@ -48,7 +48,7 @@ def extract_label_data(api_key: str, front_bytes: bytes, back_bytes: bytes, mode
         raise ValueError("API Key is missing.")
 
     if model_name is None:
-        model_name = os.environ.get("FOODTRUTH_MODEL", "gemma-4-27b-it")
+        model_name = os.environ.get("FOODTRUTH_MODEL", "gemma-4-31b-it")
 
     try:
         client = genai.Client(api_key=api_key)

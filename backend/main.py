@@ -2,7 +2,9 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 from extractor import extract_label_data
 from rules import run_audits
 from models import AuditResult
